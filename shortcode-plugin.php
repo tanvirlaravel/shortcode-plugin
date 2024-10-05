@@ -132,7 +132,7 @@ function sp_handle_list_posts_wp_query_class($attributes){
         while( $query->have_posts() ) {
             $query->the_post();
 
-            $outputHtml .= "<li>" . get_the_title() . "</li>";
+            $outputHtml .= '<li class="my-class"><a href="' . get_the_permalink(  ) . '"> ' . get_the_title() . ' </a></li>';
         }
 
         $outputHtml .="</ul>";

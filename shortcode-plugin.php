@@ -59,7 +59,7 @@ function sp_handle_student_data( $attributes ) {
  /** *****************************************************************
   *                        Shortcode with db operation
  *********************************************************************/ 
-add_shortcode("list-posts", "sp_handle_list_posts");
+add_shortcode("list-posts", "sp_handle_list_posts_wp_query_class");
 
 function sp_handle_list_posts(){
     /*
@@ -100,4 +100,48 @@ function sp_handle_list_posts(){
    }
 
    return "<h3>No post found</h3>";
+}
+
+function sp_handle_list_posts_wp_query_class($attributes){
+
+    $attributes = shortcode_atts( array(
+        "number"    => 5,
+    ), $attributes, "list-posts");
+
+    /*
+    Purpose:    The WP_Query class is a powerful tool for querying and retrieving posts, pages, custom post types, and other WordPress data from the database.
+        It provides a flexible and efficient way to customize and filter your content based on various criteria, such as post type, author, date, category, tags, and more.
+    
+    Key Properties:
+        $query_vars: An array of query variables that define the query parameters.
+        $posts: An array of WP_Post objects representing the retrieved posts.
+        $post: The current post object (if applicable).
+        $have_posts: A boolean indicating whether there are more posts to retrieve.
+        $found_posts: The total number of posts found in the query.
+    */
+
+    $query = new WP_Query( array(
+        "posts_per_page"    => $attributes['number'],
+        "post_status"       => 'publish'
+    ) );
+
+    if( $query->have_posts() ){
+
+        $outputHtml = "<ul>";
+
+        while( $query->have_posts() ) {
+            $query->the_post();
+
+            $outputHtml .= "<li>" . get_the_title() . "</li>";
+        }
+
+        $outputHtml .="</ul>";
+
+        return $outputHtml;
+
+    }
+
+    return "<h3>No post found</h3>";
+
+
 }
